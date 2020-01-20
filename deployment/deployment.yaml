@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: aem-operator
+  name: aem-operator
+  namespace: bedrock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aem-operator
+  template:
+    metadata:
+      labels:
+        app: aem-operator
+    spec:
+      serviceAccountName: aem-operator
+      volumes:
+      - name: vault-ssl-cert
+        secret:
+          secretName: grid-vault-default-vault-client-tls
+      containers:
+      - name: aem-operator
+        image: /grid/aem-operator
+        imagePullPolicy: Always
+        env:
+        - name: VAULT_ADDR
+          valueFrom:
+            secretKeyRef:
+              key: vault-address
+              name: bedrock-api-secrets
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: vault-token
+              name: bedrock-api-secrets
+        - name: GRID_EXTERNAL_DOMAIN
+          value: 
+        volumeMounts:
+        - name: vault-ssl-cert
+          readOnly: true
+          mountPath: /etc/ssl/certs/vault-client-ca.crt
+          subPath: vault-client-ca.crt

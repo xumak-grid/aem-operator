@@ -1,0 +1,17 @@
+apiVersion: "aem.adobe.com/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "example-aem"
+spec:
+  authors: 1
+  publishers: 2
+  dispatchers: 2
+  version: "6.2"
+  backup:
+    # Perform backup every four hours.
+    backupIntervalInSecond: 14400
+    maxBackups: 5
+    storageType: "PersistentVolume"
+    pv:
+      # 100GB
+      volumeSizeInMB: 100000
